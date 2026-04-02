@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OS Simulation Tool - Assignment 2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="bg-orb orb-a"></div>
+    <div class="bg-orb orb-b"></div>
+    <div class="bg-grid"></div>
+
+    <div class="app-shell">
+        <header class="glass-panel hero">
+            <div>
+                <p class="eyebrow">Operating System Simulation Tool</p>
+                <h1>Assignment 2: Process Synchronization and Deadlock Simulation</h1>
+                <p class="hero-copy">
+                    Build dependent processes, protect shared resources with mutexes or semaphores,
+                    detect deadlocks in real time, and resolve them with Banker safety checks or victim release.
+                </p>
+            </div>
+            <div class="hero-badges">
+                <span class="badge badge-accent"><i class="fas fa-lock"></i> Synchronization</span>
+                <span class="badge"><i class="fas fa-diagram-project"></i> Deadlock Detection</span>
+                <span class="badge"><i class="fas fa-shield-halved"></i> Banker's Algorithm</span>
+            </div>
+        </header>
+
+        <main class="dashboard">
+            <section class="control-column">
+                <div class="glass-panel panel">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-sliders text-gradient"></i> Simulation Mode</h2>
+                    </div>
+
+                    <div class="stack">
+                        <div class="field">
+                            <label for="sync-mode">Synchronization Primitive</label>
+                            <select id="sync-mode" class="premium-input">
+                                <option value="mutex">Mutex</option>
+                                <option value="semaphore">Semaphore</option>
+                                <option value="critical">Critical Section Queue</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="detection-mode">Deadlock Strategy</label>
+                            <select id="detection-mode" class="premium-input">
+                                <option value="detect-resolve">Detect and resolve</option>
+                                <option value="banker">Banker's safety check</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="time-slice">Simulation Step Speed</label>
+                            <input id="time-slice" class="premium-input" type="number" min="1" value="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel panel">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-database text-gradient"></i> Add Shared Resource</h2>
+                        <button id="btn-resource-sample" class="btn-icon" title="Add demo resources">
+                            <i class="fas fa-wand-magic-sparkles"></i>
+                        </button>
+                    </div>
+
+                    <div class="stack">
+                        <div class="field">
+                            <label for="resource-name">Resource Name</label>
+                            <input id="resource-name" class="premium-input" type="text" placeholder="FileA or Memory1">
+                        </div>
+                        <div class="inline-fields">
+                            <div class="field">
+                                <label for="resource-type">Type</label>
+                                <select id="resource-type" class="premium-input">
+                                    <option value="file">File</option>
+                                    <option value="memory">Memory</option>
+                                    <option value="generic">Generic</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="resource-total">Total Units</label>
+                                <input id="resource-total" class="premium-input" type="number" min="1" value="1">
+                            </div>
+                        </div>
+                        <button id="btn-add-resource" class="btn-primary full-width">
+                            <i class="fas fa-plus"></i> Add Resource
+                        </button>
+                    </div>
+                </div>
+
+                <div class="glass-panel panel">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-microchip text-gradient"></i> Add Process</h2>
+                        <button id="btn-load-deadlock" class="btn-icon" title="Load classic deadlock sample">
+                            <i class="fas fa-bolt"></i>
+                        </button>
+                    </div>
+
+                    <div class="stack">
+                        <div class="inline-fields">
+                            <div class="field">
+                                <label for="process-name">Process Name</label>
+                                <input id="process-name" class="premium-input" type="text" placeholder="P1">
+                            </div>
+                            <div class="field">
+                                <label for="critical-duration">Critical Section Time</label>
+                                <input id="critical-duration" class="premium-input" type="number" min="1" value="2">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="initial-allocation">Initial Allocation</label>
+                            <input id="initial-allocation" class="premium-input" type="text" placeholder="FileA:1">
+                        </div>
+                        <div class="field">
+                            <label for="resource-request">Outstanding Request</label>
+                            <input id="resource-request" class="premium-input" type="text" placeholder="Memory1:1">
+                        </div>
+                        <div class="field">
+                            <label for="max-demand">Maximum Demand</label>
+                            <input id="max-demand" class="premium-input" type="text" placeholder="FileA:1, Memory1:1">
+                        </div>
+                        <div class="field">
+                            <label for="shared-target">Shared Resource Focus</label>
+                            <input id="shared-target" class="premium-input" type="text" placeholder="FileA">
+                        </div>
+                        <button id="btn-add-process" class="btn-primary full-width">
+                            <i class="fas fa-plus"></i> Add Process
+                        </button>
+                    </div>
+                </div>
+
+                <div class="glass-panel panel">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-list text-gradient"></i> Scenario Controls</h2>
+                    </div>
+
+                    <div class="button-grid">
+                        <button id="btn-run" class="btn-success">
+                            <i class="fas fa-play"></i> Run
+                        </button>
+                        <button id="btn-step" class="btn-secondary">
+                            <i class="fas fa-forward-step"></i> Step
+                        </button>
+                        <button id="btn-resolve" class="btn-warning">
+                            <i class="fas fa-life-ring"></i> Resolve Deadlock
+                        </button>
+                        <button id="btn-reset" class="btn-secondary">
+                            <i class="fas fa-rotate-left"></i> Reset
+                        </button>
+                        <button id="btn-clear-all" class="btn-danger full-span">
+                            <i class="fas fa-trash"></i> Clear Everything
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="results-column">
+                <div class="stats-grid">
+                    <article class="glass-panel stat-card">
+                        <span class="stat-label">Processes</span>
+                        <strong id="stat-processes">0</strong>
+                        <small>Configured for the current scenario</small>
+                    </article>
+                    <article class="glass-panel stat-card">
+                        <span class="stat-label">Blocked</span>
+                        <strong id="stat-blocked">0</strong>
+                        <small>Waiting on resources or a critical section</small>
+                    </article>
+                    <article class="glass-panel stat-card">
+                        <span class="stat-label">Deadlock Status</span>
+                        <strong id="stat-deadlock">Safe</strong>
+                        <small id="deadlock-subtext">No circular wait detected</small>
+                    </article>
+                    <article class="glass-panel stat-card">
+                        <span class="stat-label">Safe Sequence</span>
+                        <strong id="stat-sequence">-</strong>
+                        <small>Computed when Banker's check is active</small>
+                    </article>
+                </div>
+
+                <div class="glass-panel panel">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-server text-gradient"></i> Shared Resources</h2>
+                    </div>
+                    <div id="resource-cards" class="resource-cards empty-message">
+                        Add resources to simulate files, memory blocks, or shared devices.
+                    </div>
+                </div>
+
+                <div class="glass-panel panel">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-table-list text-gradient"></i> Process Dependency Matrix</h2>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="premium-table">
+                            <thead>
+                                <tr>
+                                    <th>Process</th>
+                                    <th>Allocation</th>
+                                    <th>Request</th>
+                                    <th>Max</th>
+                                    <th>Shared Target</th>
+                                    <th>State</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="process-table-body">
+                                <tr class="empty-row">
+                                    <td colspan="7">No processes yet. Add a dependent process to begin.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="timeline-grid">
+                    <div class="glass-panel panel">
+                        <div class="panel-header">
+                            <h2><i class="fas fa-link text-gradient"></i> Wait-For Graph</h2>
+                        </div>
+                        <div id="wait-graph" class="graph-box empty-message">
+                            The wait-for graph will appear when processes block each other.
+                        </div>
+                    </div>
+
+                    <div class="glass-panel panel">
+                        <div class="panel-header">
+                            <h2><i class="fas fa-wave-square text-gradient"></i> Critical Section Timeline</h2>
+                        </div>
+                        <div id="timeline" class="timeline empty-message">
+                            Run the simulator to visualize critical-section access over time.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel panel">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-terminal text-gradient"></i> Event Log</h2>
+                    </div>
+                    <div id="event-log" class="log-panel empty-message">
+                        The simulator will log synchronization decisions, deadlock checks, and resolutions here.
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
