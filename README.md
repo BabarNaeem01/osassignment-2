@@ -5,7 +5,7 @@ Interactive Operating System simulation focused on process synchronization, shar
 [Live Demo](https://osassignment-2-publish.vercel.app)  
 [Project Documentation](./Assignment2_Documentation.md)
 
-## Overview
+## Overviev
 
 This project is a browser-based simulation that models how an operating system coordinates concurrent processes competing for shared resources such as files and memory. It allows a user to define resources, create dependent processes, choose a synchronization strategy, and observe how the system behaves under contention.
 
